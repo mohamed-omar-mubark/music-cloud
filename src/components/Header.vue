@@ -20,6 +20,13 @@
             <a class="px-2 text-white" href="#">Manage</a>
           </li>
         </ul>
+        <ul class="ml-auto">
+          <li>
+            <a href="#" class="px-2 text-white" @click.prevent="changeLocale">
+              {{ currentLocale }}
+            </a>
+          </li>
+        </ul>
       </div>
     </nav>
   </header>
@@ -34,11 +41,17 @@ export default {
 
   computed: {
     ...mapStores(useModalStore),
+    currentLocale() {
+      return this.$i18n.locale === "ar" ? "English" : "العربية";
+    },
   },
 
   methods: {
     toggleAuthModal() {
       this.modalStore.isOpen = !this.modalStore.isOpen;
+    },
+    changeLocale() {
+      this.$i18n.locale = this.$i18n.locale === "ar" ? "en" : "ar";
     },
   },
 };
