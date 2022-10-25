@@ -3,6 +3,7 @@ import {
   Field as VeeField,
   defineRule,
   ErrorMessage,
+  configure,
 } from "vee-validate";
 import {
   required,
@@ -13,6 +14,7 @@ import {
   min_value as minVal,
   max_value as maxVal,
   confirmed,
+  not_one_of as excluded,
 } from "@vee-validate/rules";
 
 export default {
@@ -22,12 +24,43 @@ export default {
     app.component("ErrorMessage", ErrorMessage);
 
     defineRule("required", required);
+    defineRule("tos", required);
     defineRule("min", min);
     defineRule("max", max);
     defineRule("alpha_spaces", alphaSpaces);
     defineRule("email", email);
     defineRule("min_value", minVal);
     defineRule("max_value", maxVal);
-    defineRule("confirmed", confirmed);
+    defineRule("password_mismatch", confirmed);
+    defineRule("excluded", excluded);
+    defineRule("country_excluded", excluded);
+
+    configure({
+      generateMessage: (ctx) => {
+        const messages = {
+          required: `${ctx.field} is required`,
+          min: `The fiels ${ctx.field} is too short`,
+          max: `The fiels ${ctx.field} is too long`,
+          alpha_spaces: `The fiels ${ctx.field} may only contain alphabetic characters and spaces`,
+          email: `The fiels ${ctx.field} must be a valid email`,
+          min_value: `The fiels ${ctx.field} is too low`,
+          max_value: `The fiels ${ctx.field} is too high`,
+          excluded: `you are not allowed to use this value for ${ctx.field}`,
+          country_excluded: `Due to legal reasons we cannot accept users from this country`,
+          password_mismatch: `The passwords don't match`,
+          tos: `You must agree to the terms and conditions`,
+        };
+
+        const message = messages[ctx.rule.name]
+          ? messages[ctx.rule.name]
+          : `The field ${ctx.field} is invalid`;
+
+        return message;
+      },
+      validateOnBlur: true,
+      validateOnChange: true,
+      validateOnInput: false,
+      validateOnModelUpdate: true,
+    });
   },
 };
